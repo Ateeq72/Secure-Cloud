@@ -36,6 +36,7 @@ public class DrawerActivity extends AppCompatActivity implements NavigationView.
         super.setContentView(fullLayout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
       /*  setSupportActionBar(toolbar);*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -63,6 +64,11 @@ public class DrawerActivity extends AppCompatActivity implements NavigationView.
 
         } else if (id == R.id.nav_upload) {
             startActivity(new Intent(this,uploadActivity.class));
+
+
+        }
+        else if (id == R.id.nav_setcredentials) {
+            startActivity(new Intent(this,ownCloud_Credentials_Activity.class));
 
 
         }

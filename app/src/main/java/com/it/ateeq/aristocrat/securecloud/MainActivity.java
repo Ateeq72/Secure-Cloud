@@ -27,17 +27,20 @@ import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 
 import android.os.Handler;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.logging.LogRecord;
+import com.it.ateeq.aristocrat.securecloud.uploadActivity;
 
 public class MainActivity extends DrawerActivity
 
 {
-    static Handler mHandler;
-    static OwnCloudClient mClient;
+
+    public static FilesArrayAdapter mFilesAdapter;
     Button refreshbtn;
 
     @Override
@@ -45,23 +48,30 @@ public class MainActivity extends DrawerActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.acitvity_view);
+
                     // Your base layout here
 
-        mHandler = new Handler() ;
-        Uri serverUri = Uri.parse(getString(R.string.server));
-        mClient = OwnCloudClientFactory.createOwnCloudClient(serverUri, this, true);
-        mClient.setCredentials(
-                OwnCloudCredentialsFactory.newBasicCredentials(
-                        getString(R.string.user),
-                        getString(R.string.pass)
-                )
-        );
+
+
+        mFilesAdapter = new FilesArrayAdapter(this, R.layout.file_in_list);
+        ((ListView)findViewById(R.id.listView_items_oncloud)).setAdapter(mFilesAdapter);
+
+        uploadActivity uact = new uploadActivity();
+        uact.startRefresh();
+
+
 
         refreshbtn = (Button) findViewById(R.id.button_refresh);
         refreshbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this,"Refreshing!",Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,"Refreshing!",Toast.LENGTH_SHORT).show();
+                uploadActivity uact = new uploadActivity();
+                uact.startRefresh();
+                Toast.makeText(MainActivity.this,"Done!",Toast.LENGTH_SHORT).show();
+
+
+
 
             }
         });
