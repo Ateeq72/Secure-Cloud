@@ -1,12 +1,15 @@
 package com.it.ateeq.aristocrat.securecloud;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -30,18 +33,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.logging.LogRecord;
 import com.it.ateeq.aristocrat.securecloud.uploadActivity;
+import com.owncloud.android.lib.resources.files.DownloadRemoteFileOperation;
 
-public class MainActivity extends DrawerActivity
+public class MainActivity extends DrawerActivity implements OnRemoteOperationListener, OnDatatransferProgressListener
 
 {
 
     public static FilesArrayAdapter mFilesAdapter;
     Button refreshbtn;
+    private static  String LOG_TAG = MainActivity.class.getCanonicalName();
+    ProgressBar uploadprogress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +61,9 @@ public class MainActivity extends DrawerActivity
 
 
 
-        mFilesAdapter = new FilesArrayAdapter(this, R.layout.file_in_list);
+        mFilesAdapter = new FilesArrayAdapter(this, R.layout.list_item);
         ((ListView)findViewById(R.id.listView_items_oncloud)).setAdapter(mFilesAdapter);
+        uploadprogress = (ProgressBar) findViewById(R.id.progressBar_download);
 
         uploadActivity uact = new uploadActivity();
         uact.startRefresh();
@@ -101,12 +110,64 @@ public class MainActivity extends DrawerActivity
         return super.onOptionsItemSelected(item);
     }
 
+    public void startDownload(String filePath, String targetDirectory) {
+        DownloadRemoteFileOperation downloadOperation = new DownloadRemoteFileOperation(filePath, targetDirectory);
+        downloadOperation.addDatatransferProgressListener(MainActivity.this);
+        downloadOperation.execute( ownCloud_Credentials_Activity.mClient, this,ownCloud_Credentials_Activity.mHandler);
+    }
 
 
+    @Override
+    public void onTransferProgress(long progressRate, long totalTransferredSoFar, long totalToTransfer, String fileAbsoluteName) {
+
+        final long percentage = (totalToTransfer > 0 ? totalTransferredSoFar * 100 / totalToTransfer : 0);
+
+        Log.d(LOG_TAG, "progressRate " + percentage);
 
 
+        ownCloud_Credentials_Activity.mHandler.post(new Runnable() {
 
+            @Override
+            public void run() {
 
+                int progressint = Integer.parseInt(String.valueOf(percentage));
+
+                uploadprogress.setProgress(progressint);
+            }
+        });
+    }
+
+    @Override
+    public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) {
+        if (operation instanceof DownloadRemoteFileOperation) {
+            if (result.isSuccess()) {
+                // do your stuff here
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+                alert.setTitle("Download Status:");
+                alert.setMessage("Download Success!");
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+            }
+            else{
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+                alert.setTitle("Download Status:");
+                alert.setMessage("Download failed! " + result.toString());
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+            }
+        }
+
+    }
 }
 
 

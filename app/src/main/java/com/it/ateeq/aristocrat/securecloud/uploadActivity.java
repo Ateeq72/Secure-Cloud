@@ -217,6 +217,7 @@ public class uploadActivity extends DrawerActivity implements OnRemoteOperationL
     @SuppressWarnings("deprecation")
     private void onSuccessfulDownload(DownloadRemoteFileOperation operation, RemoteOperationResult result) {
 
+
     }
 
     public void startRefresh() {
@@ -232,6 +233,7 @@ public class uploadActivity extends DrawerActivity implements OnRemoteOperationL
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(selectedFile.getAbsolutePath(), remotePath, mimeType);
         uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(ownCloud_Credentials_Activity.mClient, this, ownCloud_Credentials_Activity.mHandler);
+        fileselected.setText(String.format("Uploading : %s", selectedFile.getName()));
     }
 
 
@@ -247,13 +249,10 @@ public class uploadActivity extends DrawerActivity implements OnRemoteOperationL
 
             @Override
             public void run() {
-                fileselected.setText(String.format("Uploading : %s", selectedFile.getName()));
+
                 int progressint = Integer.parseInt(String.valueOf(percentage));
                 uploadprogress = (ProgressBar) findViewById(R.id.progressBar_progressbar);
                 uploadprogress.setProgress(progressint);
-
-
-
             }
         });
 
