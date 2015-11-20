@@ -55,7 +55,7 @@ public class FilesArrayAdapter extends ArrayAdapter<RemoteFile> {
                 AlertDialog.Builder b = new AlertDialog.Builder(getContext());
                 b.setTitle("Please Enter Local Directory to Download ");
                 final EditText input = new EditText(getContext());
-                input.setText(Environment.getExternalStorageDirectory().getPath() + "/owncloud" + selectedOnCloudFile);
+                input.setText(Environment.getExternalStorageDirectory().getPath() + "/owncloud" );
                 b.setView(input);
                 b.setPositiveButton("OK", new DialogInterface.OnClickListener()
                 {

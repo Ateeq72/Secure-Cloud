@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SecureCloud.iml" filepath="$PROJECT_DIR$/SecureCloud.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/owncloud-android-library/owncloud-android-library.iml" filepath="$PROJECT_DIR$/owncloud-android-library/owncloud-android-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/ownCloud_lib/owncloud-android-library/owncloud-android-library.iml" filepath="$PROJECT_DIR$/ownCloud_lib/owncloud-android-library/owncloud-android-library.iml" />
     </modules>
   </component>

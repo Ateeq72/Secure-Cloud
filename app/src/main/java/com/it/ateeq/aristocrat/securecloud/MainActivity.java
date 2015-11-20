@@ -35,6 +35,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -49,7 +50,9 @@ public class MainActivity extends DrawerActivity implements OnRemoteOperationLis
     public static FilesArrayAdapter mFilesAdapter;
     Button refreshbtn;
     private static  String LOG_TAG = MainActivity.class.getCanonicalName();
-    ProgressBar uploadprogress;
+    public static ProgressBar uploadprogress;
+    static AlertDialog.Builder alert;
+    static TextView downloadView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +60,17 @@ public class MainActivity extends DrawerActivity implements OnRemoteOperationLis
 
         setContentView(R.layout.acitvity_view);
 
+
                     // Your base layout here
 
+        alert = new AlertDialog.Builder(this);
 
 
         mFilesAdapter = new FilesArrayAdapter(this, R.layout.list_item);
         ((ListView)findViewById(R.id.listView_items_oncloud)).setAdapter(mFilesAdapter);
+
         uploadprogress = (ProgressBar) findViewById(R.id.progressBar_download);
+        downloadView = (TextView) findViewById(R.id.textView_downloadView);
 
         uploadActivity uact = new uploadActivity();
         uact.startRefresh();
@@ -131,10 +138,23 @@ public class MainActivity extends DrawerActivity implements OnRemoteOperationLis
             public void run() {
 
                 int progressint = Integer.parseInt(String.valueOf(percentage));
-
                 uploadprogress.setProgress(progressint);
+                downloadView.setText("Downloading : " + FilesArrayAdapter.selectedOnCloudFile);
             }
         });
+    }
+
+    public void showalertbox(String status)
+    {
+        alert.setTitle("Download Status:");
+        alert.setMessage(status);
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alert.show();
     }
 
     @Override
@@ -142,28 +162,12 @@ public class MainActivity extends DrawerActivity implements OnRemoteOperationLis
         if (operation instanceof DownloadRemoteFileOperation) {
             if (result.isSuccess()) {
                 // do your stuff here
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
-                alert.setTitle("Download Status:");
-                alert.setMessage("Download Success!");
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
+                showalertbox("Download Success!");
+                downloadView.setText("");
             }
             else{
-                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
-                alert.setTitle("Download Status:");
-                alert.setMessage("Download failed! " + result.toString());
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
+                showalertbox("Download Failed!");
+                downloadView.setText("");
             }
         }
 
