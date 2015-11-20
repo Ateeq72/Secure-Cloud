@@ -10,7 +10,7 @@
     android:orientation="vertical"
     android:gravity="bottom">
 
-    <ImageView android:layout_width="82dp" android:layout_height="82dp"
+    <ImageView android:layout_width="60dp" android:layout_height="60dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:src="@drawable/owncloud_icon_jpg" android:id="@+id/imageView" />
 
